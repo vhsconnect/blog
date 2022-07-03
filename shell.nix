@@ -5,12 +5,16 @@ let
     (ps: with ps;
     [
       hakyll
-      hlint 
+      haskell-language-server
+      hlint
+      ormolu
+      floskell
       hindent
+      ghcid
     ]);
 in
 pkgs.stdenv.mkDerivation {
   name = "my-haskell-env-0";
-  buildInputs = [ ghc ];
+  buildInputs = [ ghc pkgs.glibcLocales ];
   shellHook = "eval $(egrep ^export ${ghc}/bin/ghc) && ponysay 'in the shell'";
 }
