@@ -32,7 +32,7 @@
     <p></p>
     
   </section>
-  <section><p>Once in the repl, start by importing the sources. Those are typically at <code>./nix/sources.nix</code>. It’s easiest to assign those to a variable. Then import their nixpkgs with an empty attribute set.</p>
+  <section><p>Once in the repl, start by importing the sources. Assuming you’re using Niv, those are typically at <code>./nix/sources.nix</code>. It’s easiest to assign those to a variable. Then import their nixpkgs by calling it with an empty attribute set.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode nix"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">x</span> = import ./nix/sources.nix</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="ex">y</span> = import x.nixpkgs {}</span></code></pre></div></section>
 </article>
