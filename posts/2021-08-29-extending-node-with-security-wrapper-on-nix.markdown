@@ -1,5 +1,5 @@
 ---
-tags: nixos 
+tags: nixos, computer 
 title: Extending Node with a security wrapper on Nixos
 author: vhs
 ---

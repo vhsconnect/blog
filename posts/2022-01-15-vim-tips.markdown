@@ -1,0 +1,15 @@
+---
+tags: vim 
+title: vim stuff
+author: vhs
+---
+
+- you can sort multiple lines by the first letter of each line, by highlighting the bunch and executing `:sort`
+
+- you can edit multiple lines by enting visual mode `<ctrl>v` and then hitting `I` or `A` entering your edit and pressing `Esc`
+
+- you can also append to the end of the line by hitting `$` before the `A`
+
+- you can input x amount of chars at once with: `<x>` `i` `<char>` 
+
+- you can replace x amount of chars with a char by highlighting the text then `r` `<char>`
