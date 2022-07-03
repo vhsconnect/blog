@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Hakyll Blog - dualbooting nixos alongside other linux oses</title>
+    <link rel="stylesheet" href="../css/default.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+      </div>
+      <nav>
+        <a href="../">Home</a>
+        <a href="../about.html">About</a>
+        <a href="../contact.html">Contact</a>
+        <a href="../archive.html">Archive</a>
+      </nav>
+    </header>
+
+    <main role="main">
+      <h1>dualbooting nixos alongside other linux oses</h1>
+      <article>
+  <section class="header">
+    Posted on November 11, 2021 
+     by vhs 
+     
+    <p></p>
+    
+  </section>
+  <section><ul>
+<li><p>Install the other OS first, then install NixOs.</p></li>
+<li><p>If you end up booting into the second OS’ welcome screen, you’ll need to switch to NixOs’ bootloader. Change the booting priority through your bios setting.</p></li>
+<li><p>Install your nixOs configurations with the following boot attrs, getting rid of the systemd-boot module all together. OSProber will locate your second distro and add it as an entry in the grub boot menu.</p></li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode nix"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>  <span class="ex">...</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>  <span class="ex">boot.loader.efi.canTouchEfiVariables</span> = true<span class="kw">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>  <span class="ex">boot.loader.grub.enable</span> = true<span class="kw">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>  <span class="ex">boot.loader.grub.devices</span> = [ <span class="st">&quot;nodev&quot;</span> ]<span class="kw">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>  <span class="ex">boot.loader.grub.efiSupport</span> = true<span class="kw">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>  <span class="ex">boot.loader.grub.useOSProber</span> = true<span class="kw">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a><span class="kw">}</span></span></code></pre></div>
+<p>or if you are using legacy boot/efi</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode nix"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>  <span class="ex">boot.loader.grub</span> = {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>    <span class="bu">enable</span> = true<span class="kw">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>    <span class="ex">device</span> = user.mbrDevice<span class="kw">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>  <span class="kw">}</span>;</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>}</span></code></pre></div>
+<p>For multiple machines, I like to paramatize <code>efi</code> option in a user.nix file so I have something like this</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode nix"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>  <span class="bu">let</span> user  = (import <span class="op">&lt;</span>path to user.nix<span class="op">&gt;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>  <span class="co"># example user = {</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>  <span class="co">#   efiBoot = true;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>  <span class="co">#   mbrDevice = &quot;/dev/sda&quot;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>  <span class="co"># }</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>  <span class="ex">boot.loader</span> =</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>    <span class="kw">if</span> <span class="ex">user.efiBoot</span> then {</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a>      <span class="ex">efi</span> = { canTouchEfiVariables = true<span class="kw">;</span> <span class="kw">}</span>;</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>      <span class="ex">grub</span> = {</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>        <span class="bu">enable</span> = true<span class="kw">;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a>        <span class="ex">devices</span> = [ <span class="st">&quot;nodev&quot;</span> ]<span class="kw">;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a>        <span class="ex">efiSupport</span> = true<span class="kw">;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>        <span class="ex">useOSProber</span> = true<span class="kw">;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>      };</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a>    } <span class="kw">else</span> <span class="kw">{</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a>      <span class="ex">grub</span> = {</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a>        <span class="bu">enable</span> = true<span class="kw">;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true"></a>        <span class="ex">device</span> = user.mbrDevice<span class="kw">;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true"></a>      <span class="kw">}</span>;</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true"></a>    };</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true"></a>}</span></code></pre></div>
+<p>note: this worked with other Debian based systems. For Arch based systems, I couldn’t successfully boot the OS from the NixOs boot screen (eventhough it was an entry) I had to access the secondOs’ bootloader from the boot settings, as if I were booting a usb. Surely there is a way but you might need to tinker a litte extra</p></section>
+</article>
+
+    </main>
+
+    <footer>
+      Site generated by
+      <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+    </footer>
+  </body>
+</html>
