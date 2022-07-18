@@ -202,30 +202,58 @@ code span.al {
   color: #bfb5f4;
   font-weight: bold;
 } /* Alert */
-code span.an {
-  color: #585858;
+code span.er {
+  color: #bfb5f4;
   font-weight: bold;
-  font-style: italic;
-} /* Annotation */
-code span.at {
-  color: #96bfff;
-} /* Attribute */
+} /* Error */
 code span.bn {
   color: greenyellow;
 } /* BaseN */
-code span.bu {
+code span.kw {
   color: #f5bdb0;
-} /* BuiltIn */
+  font-weight: bold;
+} /* Keyword */
+code span.ot {
+  color: #c0ea44;
+} /* Other */
 code span.cf {
-  color: #96bfff;
+  color: #c0ea44;
   font-weight: bold;
 } /* ControlFlow */
+code span.dt {
+  color: #c0ea44;
+} /* DataType */
+code span.fu {
+  color: #96bfff;
+} /* Function */
+code span.at {
+  color: #96bfff;
+} /* Attribute */
 code span.ch {
   color: greenyellow;
 } /* Char */
+code span.im {
+  color: #f5bdb0;
+} /* Import */
+code span.bu {
+  color: #f5bdb0;
+} /* BuiltIn */
+code span.pp {
+  color: #f4b5b5;
+} /* Preprocessor */
 code span.cn {
-  color: #880000;
+  color: #f5bdb0;
 } /* Constant */
+code span.do {
+  color: #f5bdb0;
+  font-style: bold;
+} /* Documentation */
+code span.va {
+  color: #f5bdb0;
+} /* Variable */
+code span.op {
+  color: #f5bdb0;
+} /* Operator */
 code span.co {
   color: #585858;
   font-style: italic;
@@ -235,66 +263,38 @@ code span.cv {
   font-weight: bold;
   font-style: italic;
 } /* CommentVar */
-code span.do {
-  color: #ba2121;
-  font-style: bold;
-} /* Documentation */
-code span.dt {
-  color: #c0ea44;
-} /* DataType */
-code span.dv {
-  color: greenyellow;
-} /* DecVal */
-code span.er {
-  color: #bfb5f4;
-  font-weight: bold;
-} /* Error */
-code span.ex {
-} /* Extension */
-code span.fl {
-  color: greenyellow;
-} /* Float */
-code span.fu {
-  color: #96bfff;
-} /* Function */
-code span.im {
-  color: #f5bdb0;
-} /* Import */
 code span.in {
   color: #585858;
   font-weight: bold;
   font-style: italic;
 } /* Information */
-code span.kw {
-  color: #c0ea44;
+code span.an {
+  color: #585858;
   font-weight: bold;
-} /* Keyword */
-code span.op {
-  color: #f5bdb0;
-} /* Operator */
-code span.ot {
-  color: #c0ea44;
-} /* Other */
-code span.pp {
-  color: #bc7a00;
-} /* Preprocessor */
-code span.sc {
-  color: greenyellow;
-} /* SpecialChar */
-code span.ss {
-  color: #bb6688;
-} /* SpecialString */
-code span.st {
-  color: greenyellow;
-} /* String */
-code span.va {
-  color: #f4b5b5;
-} /* Variable */
-code span.vs {
-  color: greenyellow;
-} /* VerbatimString */
+  font-style: italic;
+} /* Annotation */
 code span.wa {
   color: #585858;
   font-weight: bold;
   font-style: italic;
 } /* Warning */
+code span.dv {
+  color: greenyellow;
+} /* DecVal */
+code span.ex {
+} /* Extension */
+code span.fl {
+  color: greenyellow;
+} /* Float */
+code span.sc {
+  color: greenyellow;
+} /* SpecialChar */
+code span.vs {
+  color: greenyellow;
+} /* VerbatimString */
+code span.ss {
+  color: #21b452;
+} /* SpecialString */
+code span.st {
+  color: #21b452;
+} /* String */
