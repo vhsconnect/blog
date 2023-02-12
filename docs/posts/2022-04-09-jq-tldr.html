@@ -28,13 +28,15 @@
   <section class="header">
     Posted on April  9, 2022 
      by vhs 
+  </section>
+  <section class="header">
      
-    <p></p>
+     Tags: <a title="All pages tagged 'jq'." href="../tags/jq.html">jq</a>, <a title="All pages tagged 'bash'." href="../tags/bash.html">bash</a>
     
   </section>
   <section><p>quick scribles to remember jq usage</p>
 <ul>
-<li>identity <code>cat &lt;file&gt; | jq   '.'</code></li>
+<li>identity <code>cat &lt;file&gt; | jq '.'</code></li>
 <li>property access <code>cat &lt;file&gt; | jq '&lt;name of property&gt;'</code></li>
 <li>combine two filters with | <code>cat &lt;file&gt; | jq '. | .foo'</code></li>
 <li>provide 2 outputs with “,” <code>cat &lt;file&gt; | jq '. , .foo'</code></li>

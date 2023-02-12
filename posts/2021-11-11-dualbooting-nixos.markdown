@@ -1,5 +1,5 @@
 ---
-tags: nixos
+tags: nixos, linux
 title: dualbooting nixos alongside other linux oses
 author: vhs
 ---
@@ -22,6 +22,7 @@ author: vhs
 ```
 
 or if you are using legacy boot/efi
+
 ```nix
 {
   boot.loader.grub = {
@@ -32,6 +33,7 @@ or if you are using legacy boot/efi
 ```
 
 For multiple machines, I like to paramatize `efi` option in a user.nix file so I have something like this
+
 ```nix
 {
   let user  = (import <path to user.nix>)
@@ -60,5 +62,3 @@ For multiple machines, I like to paramatize `efi` option in a user.nix file so I
 ```
 
 note: this worked with other Debian based systems. For Arch based systems, I couldn't successfully boot the OS from the NixOs boot screen (eventhough it was an entry) I had to access the secondOs' bootloader from the boot settings, as if I were booting a usb. Surely there is a way but you might need to tinker a litte extra
-
-

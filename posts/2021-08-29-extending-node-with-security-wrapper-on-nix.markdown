@@ -1,5 +1,5 @@
 ---
-tags: nixos, computer 
+tags: nixos, linux, setcap
 title: Extending Node with a security wrapper on Nixos
 author: vhs
 ---

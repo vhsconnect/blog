@@ -1,5 +1,5 @@
 ---
-tags: nixos
+tags: nixos, python, virtualenv
 title: running a python script with virtualenv on NixOs
 author: vhs
 ---

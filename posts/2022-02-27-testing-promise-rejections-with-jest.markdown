@@ -1,5 +1,5 @@
 ---
-tags: javascript, jest,
+tags: javascript, jest
 title: Testing promise rejections with jest
 author: vhs
 ---

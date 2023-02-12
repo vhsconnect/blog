@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>vim stuff</title>
+    <title>Writing bootable linux images with dd and fsync</title>
     <link rel="stylesheet" href="../css/default.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,24 +23,21 @@
     </header>
 
     <main role="main">
-      <h1>vim stuff</h1>
+      <h1>Writing bootable linux images with dd and fsync</h1>
       <article>
   <section class="header">
-    Posted on January 15, 2022 
+    Posted on February  7, 2023 
      by vhs 
   </section>
   <section class="header">
      
-     Tags: <a title="All pages tagged 'vim'." href="../tags/vim.html">vim</a>
+     Tags: <a title="All pages tagged 'nixos'." href="../tags/nixos.html">nixos</a>
     
   </section>
-  <section><ul>
-<li><p>you can sort multiple lines by the first letter of each line, by highlighting the bunch and executing <code>:sort</code></p></li>
-<li><p>you can edit multiple lines by enting visual mode <code>&lt;ctrl&gt;v</code> and then hitting <code>I</code> or <code>A</code> entering your edit and pressing <code>Esc</code></p></li>
-<li><p>you can also append to the end of the line by hitting <code>$</code> before the <code>A</code></p></li>
-<li><p>you can input x amount of chars at once with: <code>&lt;x&gt;</code> <code>i</code> <code>&lt;char&gt;</code></p></li>
-<li><p>you can replace x amount of chars with a char by highlighting the text then <code>r</code> <code>&lt;char&gt;</code></p></li>
-</ul></section>
+  <section><p>use <code>lsblk</code> to find where the sdcard or usb stick is mounted. Something like <code>sda</code>.</p>
+<p>I’ve read other sources advising to unmount the boot image from <code>/run</code> or <code>/media</code> before writing to the flash drive, but I never had to do that.</p>
+<p>Then use the dd command the write the image. image files can be <code>.img</code>, <code>.raw</code> or <code>.iso</code> depending on the architecture and the vendor</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="fu">dd</span> if=pathto.img of=/dev/sdb bs=4M iflag=fullblock oflag=direct conv=fsync status=progress</span></code></pre></div></section>
 </article>
 
     </main>
