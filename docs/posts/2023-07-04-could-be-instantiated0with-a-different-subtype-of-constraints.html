@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>X could be instantiated with a different subtype of constraint 'object'.</title>
+    <link rel="stylesheet" href="../css/default.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+      </div>
+      <nav>
+        <a href="../">Home</a>
+        <a href="../about.html">About</a>
+        <a href="../contact.html">Contact</a>
+        <a href="../archive.html">Archive</a>
+      </nav>
+    </header>
+
+    <main role="main">
+      <h1>X could be instantiated with a different subtype of constraint 'object'.</h1>
+      <article>
+  <section class="header">
+    Posted on July  4, 2023 
+     by vhs 
+  </section>
+  <section class="header">
+     
+     Tags: <a title="All pages tagged 'typescript'." href="../tags/typescript.html">typescript</a>
+    
+  </section>
+  <section><p>I ran into this error the other day - and felt like this great stack overflow answer by <a href="https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint">Flavio Vilante</a> needed to be archived.</p>
+<h3 id="the-question">The Question</h3>
+<p>Type X is not assignable to type ‘Y’. ‘X’ is assignable to the constraint of type ‘Y’, but ‘Y’ could be instantiated with a different subtype of constraint ‘object’.</p>
+<h3 id="the-short-answer">The Short Answer</h3>
+<p>TLDR; There are two common causes for this kind of error message. You are doing the first one (see below). Along with the text, I explain in rich detail what this error message wants to convey.</p>
+<p>CAUSE 1: In typescript, a concrete instance is not allowed to be assigned to a type parameter. Following you can see an example of the ‘problem’ and the ‘problem solved’, so you can compare the difference and see what changes:</p>
+<p>PROBLEM</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>const func1 <span class="op">=</span> <span class="op">&lt;</span>A extends <span class="dt">string</span><span class="op">&gt;</span>(a<span class="op">:</span> A <span class="op">=</span> <span class="st">&quot;foo&quot;</span>) <span class="kw">=&gt;</span> <span class="vs">`hello!`</span><span class="op">;</span> <span class="co">// Error!</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>const func2 <span class="op">=</span> <span class="op">&lt;</span>A extends <span class="dt">string</span><span class="op">&gt;</span>(a<span class="op">:</span> A) <span class="kw">=&gt;</span> {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>    <span class="co">//stuff</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>    a <span class="op">=</span> <span class="vs">`foo`</span><span class="op">;</span> <span class="co">// Error!</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>    <span class="co">//stuff</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>}<span class="op">;</span></span></code></pre></div>
+<p>SOLUTION</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>const func1 <span class="op">=</span> <span class="op">&lt;</span>A extends <span class="dt">string</span><span class="op">&gt;</span>(a<span class="op">:</span> A) <span class="kw">=&gt;</span> <span class="vs">`hello!`</span><span class="op">;</span> <span class="co">// ok</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>const func2 <span class="op">=</span> <span class="op">&lt;</span>A extends <span class="dt">string</span><span class="op">&gt;</span>(a<span class="op">:</span> A) <span class="kw">=&gt;</span> {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>    <span class="co">//ok</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>    <span class="co">//stuff</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>    <span class="co">//stuff</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>}<span class="op">;</span></span></code></pre></div>
+<p>CAUSE 2: Although you are not doing the below error in your code. It is also a normal circumstance where this kind of error message pops up. You should avoid doing this:</p>
+<p>Repeat (by mistaken) the Type Parameter in a class, type, or interface.</p>
+<p>Don’t let the complexity of the below code confuse you, the only thing I want you to concentrate on is how the removing of the letter ‘A’ solves the problem:</p>
+<p>PROBLEM:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">type</span> Foo<span class="op">&lt;</span>A<span class="op">&gt;</span> <span class="op">=</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>    <span class="co">//look the above 'A' is conflicting with the below 'A'</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>    map<span class="op">:</span> <span class="op">&lt;</span>A<span class="op">,</span> B<span class="op">&gt;</span>(f<span class="op">:</span> (_<span class="op">:</span> A) <span class="kw">=&gt;</span> B) <span class="kw">=&gt;</span> Foo<span class="op">&lt;</span>B<span class="op">&gt;;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>}<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>const makeFoo <span class="op">=</span> <span class="op">&lt;</span>A<span class="op">&gt;</span>(a<span class="op">:</span> A)<span class="op">:</span> Foo<span class="op">&lt;</span>A<span class="op">&gt;</span> <span class="kw">=&gt;</span> ({</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>    map<span class="op">:</span> (f) <span class="kw">=&gt;</span> <span class="fu">makeFoo</span>(<span class="fu">f</span>(a))<span class="op">,</span> <span class="co">//error!</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>})<span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>SOLUTION<span class="op">:</span> <span class="kw">type</span> Foo<span class="op">&lt;</span>A<span class="op">&gt;</span> <span class="op">=</span> {</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>    <span class="co">// conflict removed</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a>    map<span class="op">:</span> <span class="op">&lt;</span>B<span class="op">&gt;</span>(f<span class="op">:</span> (_<span class="op">:</span> A) <span class="kw">=&gt;</span> B) <span class="kw">=&gt;</span> Foo<span class="op">&lt;</span>B<span class="op">&gt;;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a>}<span class="op">;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>const makeFoo <span class="op">=</span> <span class="op">&lt;</span>A<span class="op">&gt;</span>(a<span class="op">:</span> A)<span class="op">:</span> Foo<span class="op">&lt;</span>A<span class="op">&gt;</span> <span class="kw">=&gt;</span> ({</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a>    map<span class="op">:</span> (f) <span class="kw">=&gt;</span> <span class="fu">makeFoo</span>(<span class="fu">f</span>(a))<span class="op">,</span> <span class="co">//ok</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a>})<span class="op">;</span></span></code></pre></div>
+<h3 id="the-long-answer">The Long Answer</h3>
+<p>Following I’ll decompose each element of the error message below:</p>
+<p>Type ‘{}’ is not assignable to type ‘P’. ‘{}’ is assignable to the constraint of type ‘P’, but ‘P’ could be instantiated with a different subtype of constraint’object’</p>
+<p>WHAT IS TYPE {}</p>
+<p>It’s a type that you can assign anything except null or undefined. For example:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">type</span> A <span class="op">=</span> {}<span class="op">;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>const a0<span class="op">:</span> A <span class="op">=</span> undefined<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>const a1<span class="op">:</span> A <span class="op">=</span> null<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>const a2<span class="op">:</span> A <span class="op">=</span> <span class="dv">2</span><span class="op">;</span> <span class="co">// ok</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>const a3<span class="op">:</span> A <span class="op">=</span> <span class="st">&quot;hello world&quot;</span><span class="op">;</span> <span class="co">//ok</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>const a4<span class="op">:</span> A <span class="op">=</span> { foo<span class="op">:</span> <span class="st">&quot;bar&quot;</span> }<span class="op">;</span> <span class="co">//ok</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a><span class="co">// and so on...</span></span></code></pre></div>
+<p>WHAT IS is not assignable</p>
+<p>To assign is to make a variable of a particular type correspond to a particular instance. If you mismatch the type of the instance you get an error. For example:</p>
+<p>// type string is not assignable to type number const a: number = ‘hello world’ //error</p>
+<p>// type number is assinable to type number const b: number = 2 // ok</p>
+<p>WHAT IS A different subtype</p>
+<p>Two types are equals: if they do not add or remove details in relation to each other.</p>
+<p>Two types are different: if they are not equal.</p>
+<p>Type A is a subtype of type S: if A adds detail without removing already existent detail from S.</p>
+<p>type A and type B are different subtypes of type S: If A and B are subtypes of S, but A and B are different types. Said in other words: A and B adds detail to the type S, but they do not add the same detail.</p>
+<p>Example: In the code below, all the following statements are true:</p>
+<pre><code>    A and D are equal types
+    B is subtype of A
+    E is not subtype of A
+    B and C are different subtype of A
+</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="kw">type</span> A <span class="op">=</span> { <span class="kw">readonly</span> <span class="dv">0</span><span class="op">:</span> <span class="st">&quot;0&quot;</span> }<span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="kw">type</span> B <span class="op">=</span> { <span class="kw">readonly</span> <span class="dv">0</span><span class="op">:</span> <span class="st">&quot;0&quot;</span><span class="op">;</span> <span class="kw">readonly</span> foo<span class="op">:</span> <span class="st">&quot;foo&quot;</span> }<span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="kw">type</span> C <span class="op">=</span> { <span class="kw">readonly</span> <span class="dv">0</span><span class="op">:</span> <span class="st">&quot;0&quot;</span><span class="op">;</span> <span class="kw">readonly</span> bar<span class="op">:</span> <span class="st">&quot;bar&quot;</span> }<span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a><span class="kw">type</span> D <span class="op">=</span> { <span class="kw">readonly</span> <span class="dv">0</span><span class="op">:</span> <span class="st">&quot;0&quot;</span> }<span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a><span class="kw">type</span> E <span class="op">=</span> { <span class="kw">readonly</span> <span class="dv">1</span><span class="op">:</span> <span class="st">&quot;1&quot;</span><span class="op">;</span> <span class="kw">readonly</span> bar<span class="op">:</span> <span class="st">&quot;bar&quot;</span> }<span class="op">;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a><span class="kw">type</span> A <span class="op">=</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a><span class="kw">type</span> B <span class="op">=</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a><span class="kw">type</span> C <span class="op">=</span> <span class="dv">7</span><span class="op">;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a><span class="kw">type</span> D <span class="op">=</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a><span class="kw">type</span> E <span class="op">=</span> <span class="vs">`hello world`</span><span class="op">;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true"></a><span class="kw">type</span> A <span class="op">=</span> <span class="dt">boolean</span><span class="op">;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true"></a><span class="kw">type</span> B <span class="op">=</span> true<span class="op">;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true"></a><span class="kw">type</span> C <span class="op">=</span> false<span class="op">;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true"></a><span class="kw">type</span> D <span class="op">=</span> <span class="dt">boolean</span><span class="op">;</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true"></a><span class="kw">type</span> E <span class="op">=</span> <span class="dt">number</span><span class="op">;</span></span></code></pre></div>
+<p>NOTE: Structural Type</p>
+<p>When you see in TS the use of type keyword, for instance in type A = { foo: ‘Bar’ } you should read: Type alias A is pointing to type structure { foo: ‘Bar’ }. The general syntax is: type [type_alias_name] = [type_structure]. Typescript type system just checks against [type_structure] and not against the [type_alias_name]. That means that in TS there’s no difference in terms of type checking between following: type A = { foo: ‘bar } and type B = { foo: ’bar’ }. For more see: Official Doc.</p>
+<p><em>WHAT IS constraint of type ‘X’</em></p>
+<p>The Type Constraint is simply what you put on the right side of the ‘extends’ keyword. In the below example, the Type Constraint is ‘B’.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>const func <span class="op">=</span> <span class="op">&lt;</span>A extends B<span class="op">&gt;</span>(a<span class="op">:</span> A) <span class="kw">=&gt;</span> <span class="vs">`hello!`</span><span class="op">;</span></span></code></pre></div>
+<p>Reads: Type Constraint ‘B’ is the constraint of type ‘A’ WHY THE ERROR HAPPENS</p>
+<p>To illustrate I’ll show you three cases. The only thing that will vary in each case is the Type Constraint, nothing else will change.</p>
+<p>What I want you to notice is that the restriction that Type Constraint imposes to Type Parameter does not include different subtypes. Let’s see it:</p>
+<p>Given:</p>
+<p>type Foo = { readonly 0: ‘0’} type SubType = { readonly 0: ‘0’, readonly a: ‘a’} type DiffSubType = { readonly 0: ‘0’, readonly b: ‘b’}</p>
+<p>const foo: Foo = { 0: ‘0’} const foo_SubType: SubType = { 0: ‘0’, a: ‘a’ } const foo_DiffSubType: DiffSubType = { 0: ‘0’, b: ‘b’ }</p>
+<p>CASE 1: NO RESTRICTION</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a>const func <span class="op">=</span> <span class="op">&lt;</span>A<span class="op">&gt;</span>(a<span class="op">:</span> A) <span class="kw">=&gt;</span> <span class="vs">`hello!`</span><span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="co">// call examples</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a>const c0 <span class="op">=</span> <span class="fu">func</span>(undefined)<span class="op">;</span> <span class="co">// ok</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a>const c1 <span class="op">=</span> <span class="fu">func</span>(null)<span class="op">;</span> <span class="co">// ok</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true"></a>const c2 <span class="op">=</span> <span class="fu">func</span>(() <span class="kw">=&gt;</span> undefined)<span class="op">;</span> <span class="co">// ok</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true"></a>const c3 <span class="op">=</span> <span class="fu">func</span>(<span class="dv">10</span>)<span class="op">;</span> <span class="co">// ok</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true"></a>const c4 <span class="op">=</span> <span class="fu">func</span>(<span class="vs">`hi`</span>)<span class="op">;</span> <span class="co">// ok</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true"></a>const c5 <span class="op">=</span> <span class="fu">func</span>({})<span class="op">;</span> <span class="co">//ok</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true"></a>const c6 <span class="op">=</span> <span class="fu">func</span>(foo)<span class="op">;</span> <span class="co">// ok</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true"></a>const c7 <span class="op">=</span> <span class="fu">func</span>(foo_SubType)<span class="op">;</span> <span class="co">//ok</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true"></a>const c8 <span class="op">=</span> <span class="fu">func</span>(foo_DiffSubType)<span class="op">;</span> <span class="co">//ok</span></span></code></pre></div>
+<p>CASE 2: SOME RESTRICTION</p>
+<p>Note below that restriction does not affect subtypes.</p>
+<p>VERY IMPORTANT: In Typescript the Type Constraint does not restrict different subtypes</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a>const func <span class="op">=</span> <span class="op">&lt;</span>A extends Foo<span class="op">&gt;</span>(a<span class="op">:</span> A) <span class="kw">=&gt;</span> <span class="vs">`hello!`</span><span class="op">;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a><span class="co">// call examples</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a>const c0 <span class="op">=</span> <span class="fu">func</span>(undefined)<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>const c1 <span class="op">=</span> <span class="fu">func</span>(null)<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a>const c2 <span class="op">=</span> <span class="fu">func</span>(() <span class="kw">=&gt;</span> undefined)<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true"></a>const c3 <span class="op">=</span> <span class="fu">func</span>(<span class="dv">10</span>)<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true"></a>const c4 <span class="op">=</span> <span class="fu">func</span>(<span class="vs">`hi`</span>)<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true"></a>const c5 <span class="op">=</span> <span class="fu">func</span>({})<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true"></a>const c6 <span class="op">=</span> <span class="fu">func</span>(foo)<span class="op">;</span> <span class="co">// ok</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true"></a>const c7 <span class="op">=</span> <span class="fu">func</span>(foo_SubType)<span class="op">;</span> <span class="co">// ok &lt;-- Allowed</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true"></a>const c8 <span class="op">=</span> <span class="fu">func</span>(foo_DiffSubType)<span class="op">;</span> <span class="co">// ok &lt;-- Allowed</span></span></code></pre></div>
+<p>CASE 3: MORE CONSTRAINED</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a>const func <span class="op">=</span> <span class="op">&lt;</span>A extends SubType<span class="op">&gt;</span>(a<span class="op">:</span> A) <span class="kw">=&gt;</span> <span class="vs">`hello!`</span><span class="op">;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a><span class="co">// call examples</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true"></a>const c0 <span class="op">=</span> <span class="fu">func</span>(undefined)<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true"></a>const c1 <span class="op">=</span> <span class="fu">func</span>(null)<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true"></a>const c2 <span class="op">=</span> <span class="fu">func</span>(() <span class="kw">=&gt;</span> undefined)<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true"></a>const c3 <span class="op">=</span> <span class="fu">func</span>(<span class="dv">10</span>)<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true"></a>const c4 <span class="op">=</span> <span class="fu">func</span>(<span class="vs">`hi`</span>)<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true"></a>const c5 <span class="op">=</span> <span class="fu">func</span>({})<span class="op">;</span> <span class="co">// error</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true"></a>const c6 <span class="op">=</span> <span class="fu">func</span>(foo)<span class="op">;</span> <span class="co">// error &lt;-- Restricted now</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true"></a>const c7 <span class="op">=</span> <span class="fu">func</span>(foo_SubType)<span class="op">;</span> <span class="co">// ok &lt;-- Still allowed</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true"></a>const c8 <span class="op">=</span> <span class="fu">func</span>(foo_DiffSubType)<span class="op">;</span> <span class="co">// error &lt;-- NO MORE ALLOWED !</span></span></code></pre></div>
+<p>CONCLUSION</p>
+<p>The function below:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a>const func <span class="op">=</span> <span class="op">&lt;</span>A extends Foo<span class="op">&gt;</span>(a<span class="op">:</span> A <span class="op">=</span> foo_SubType) <span class="kw">=&gt;</span> <span class="vs">`hello!`</span><span class="op">;</span> <span class="co">//error!</span></span></code></pre></div>
+<p>Yields this error message:</p>
+<p>Type ‘SubType’ is not assignable to type ‘A’. ‘SubType’ is assignable to the constraint of type ‘A’, but ‘A’ could be instantiated with a different subtype of constraint ‘Foo’.ts(2322)</p>
+<p>Because Typescript infers A from the function call, but there’s no restriction in the language limiting you to call the function with different subtypes of ‘Foo’. For instance, all function’s call below are considered valid:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a>const c0 <span class="op">=</span> <span class="fu">func</span>(foo)<span class="op">;</span> <span class="co">// ok! type 'Foo' will be infered and assigned to 'A'</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a>const c1 <span class="op">=</span> <span class="fu">func</span>(foo_SubType)<span class="op">;</span> <span class="co">// ok! type 'SubType' will be infered</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a>const c2 <span class="op">=</span> <span class="fu">func</span>(foo_DiffSubType)<span class="op">;</span> <span class="co">// ok! type 'DiffSubType' will be infered</span></span></code></pre></div>
+<p>Therefore assigning a concrete type to a generic Type Parameter is incorrect because in TS the Type Parameter can always be instantiated to some arbitrary different subtype.</p>
+<p>Solution:</p>
+<p>Never assign a concrete type to a generic type parameter, consider it as read-only! Instead, do this:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a>const func <span class="op">=</span> <span class="op">&lt;</span>A extends Foo<span class="op">&gt;</span>(a<span class="op">:</span> A) <span class="kw">=&gt;</span> <span class="vs">`hello!`</span><span class="op">;</span> <span class="co">//ok!</span></span></code></pre></div></section>
+</article>
+
+    </main>
+
+    <footer>
+      Site generated by
+      <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+    </footer>
+  </body>
+</html>

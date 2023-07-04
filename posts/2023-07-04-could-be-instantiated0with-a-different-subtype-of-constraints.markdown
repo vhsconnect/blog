@@ -1,3 +1,9 @@
+---
+tags: typescript 
+title:  X could be instantiated with a different subtype of constraint 'object'.
+author: vhs
+---
+
 I ran into this error the other day - and felt like this great stack overflow answer by [Flavio Vilante](https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint) needed to be archived.
 
 ### The Question
@@ -13,25 +19,25 @@ CAUSE 1: In typescript, a concrete instance is not allowed to be assigned to a t
 
 PROBLEM
 
-```tsx
+```ts
 const func1 = <A extends string>(a: A = "foo") => `hello!`; // Error!
 
 const func2 = <A extends string>(a: A) => {
-  //stuff
-  a = `foo`; // Error!
-  //stuff
+    //stuff
+    a = `foo`; // Error!
+    //stuff
 };
 ```
 
 SOLUTION
 
-```tsx
+```ts
 const func1 = <A extends string>(a: A) => `hello!`; // ok
 
 const func2 = <A extends string>(a: A) => {
-  //ok
-  //stuff
-  //stuff
+    //ok
+    //stuff
+    //stuff
 };
 ```
 
@@ -43,23 +49,23 @@ Don't let the complexity of the below code confuse you, the only thing I want yo
 
 PROBLEM:
 
-```tsx
+```ts
 type Foo<A> = {
-  //look the above 'A' is conflicting with the below 'A'
-  map: <A, B>(f: (_: A) => B) => Foo<B>;
+    //look the above 'A' is conflicting with the below 'A'
+    map: <A, B>(f: (_: A) => B) => Foo<B>;
 };
 
-const makeFoo = <A,>(a: A): Foo<A> => ({
-  map: (f) => makeFoo(f(a)), //error!
+const makeFoo = <A>(a: A): Foo<A> => ({
+    map: (f) => makeFoo(f(a)), //error!
 });
 
 SOLUTION: type Foo<A> = {
-  // conflict removed
-  map: <B>(f: (_: A) => B) => Foo<B>;
+    // conflict removed
+    map: <B>(f: (_: A) => B) => Foo<B>;
 };
 
-const makeFoo = <A,>(a: A): Foo<A> => ({
-  map: (f) => makeFoo(f(a)), //ok
+const makeFoo = <A>(a: A): Foo<A> => ({
+    map: (f) => makeFoo(f(a)), //ok
 });
 ```
 
@@ -75,7 +81,7 @@ WHAT IS TYPE {}
 
 It's a type that you can assign anything except null or undefined. For example:
 
-```tsx
+```ts
 type A = {};
 const a0: A = undefined; // error
 const a1: A = null; // error
@@ -115,7 +121,7 @@ Example: In the code below, all the following statements are true:
 
 ```
 
-```tsx
+```ts
 type A = { readonly 0: "0" };
 type B = { readonly 0: "0"; readonly foo: "foo" };
 type C = { readonly 0: "0"; readonly bar: "bar" };
@@ -145,7 +151,7 @@ _WHAT IS constraint of type 'X'_
 
 The Type Constraint is simply what you put on the right side of the 'extends' keyword. In the below example, the Type Constraint is 'B'.
 
-```tsx
+```ts
 const func = <A extends B>(a: A) => `hello!`;
 ```
 
@@ -168,8 +174,8 @@ const foo_DiffSubType: DiffSubType = { 0: '0', b: 'b' }
 
 CASE 1: NO RESTRICTION
 
-```tsx
-const func = <A,>(a: A) => `hello!`;
+```ts
+const func = <A>(a: A) => `hello!`;
 
 // call examples
 const c0 = func(undefined); // ok
@@ -189,7 +195,7 @@ Note below that restriction does not affect subtypes.
 
 VERY IMPORTANT: In Typescript the Type Constraint does not restrict different subtypes
 
-```tsx
+```ts
 const func = <A extends Foo>(a: A) => `hello!`;
 // call examples
 const c0 = func(undefined); // error
@@ -205,7 +211,7 @@ const c8 = func(foo_DiffSubType); // ok <-- Allowed
 
 CASE 3: MORE CONSTRAINED
 
-```tsx
+```ts
 const func = <A extends SubType>(a: A) => `hello!`;
 
 // call examples
@@ -224,7 +230,7 @@ CONCLUSION
 
 The function below:
 
-```tsx
+```ts
 const func = <A extends Foo>(a: A = foo_SubType) => `hello!`; //error!
 ```
 
@@ -237,7 +243,7 @@ could be instantiated with a different subtype of constraint
 
 Because Typescript infers A from the function call, but there's no restriction in the language limiting you to call the function with different subtypes of 'Foo'. For instance, all function's call below are considered valid:
 
-```tsx
+```ts
 const c0 = func(foo); // ok! type 'Foo' will be infered and assigned to 'A'
 const c1 = func(foo_SubType); // ok! type 'SubType' will be infered
 const c2 = func(foo_DiffSubType); // ok! type 'DiffSubType' will be infered
@@ -249,6 +255,6 @@ Solution:
 
 Never assign a concrete type to a generic type parameter, consider it as read-only! Instead, do this:
 
-```tsx
+```ts
 const func = <A extends Foo>(a: A) => `hello!`; //ok!
 ```
