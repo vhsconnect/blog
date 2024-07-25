@@ -37,11 +37,11 @@
   <section><p>I am not a python developer. But what I know that newer packages tend to use <code>requirements.txt</code> to declare their dependencies.</p>
 <p>For python packages that are not part of nixpkgs, I found the easiest to way to run them typically is to use virtualenv. Which as I understand it, is the python way to install a project’s dependencies in a contained way and not pollute your global environment.</p>
 <p>If the project happens to have a requirements.txt. I found that the process is pretty straightforward. Just follow the section from the nixos python wiki page about (using virtualenv) [https://nixos.wiki/wiki/Python].</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">python</span> -m venv .venv</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="bu">source</span> .venv/bin/activate</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="ex">pip</span> install -r requirements.txt</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> venv .venv</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .venv/bin/activate</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span></code></pre></div>
 <p>If the project has a setup.py run that as well</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ex">python</span> setup.py install</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> setup.py install</span></code></pre></div>
 <p>When you need to use these packages, just drop into the virtualenv of the project and you’ll have access to it <code>source &lt;path_to_your_project&gt;/.venv/bin/activate</code> then run the setup script again. 🤷</p></section>
 </article>
 

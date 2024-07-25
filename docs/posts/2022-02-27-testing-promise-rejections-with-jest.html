@@ -35,20 +35,20 @@
     
   </section>
   <section><p>Often we need to timeout network requests after a certain amount of time. One way to do that in javascript is to use Promise.race() to guard against a network request taking to long to resolve by feeding it a Promise that resolves with a <code>setTimeout</code> along with your wrapped network request promise.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="bu">Promise</span><span class="op">.</span><span class="fu">race</span>(myNetworkRequest<span class="op">,</span> <span class="kw">new</span> <span class="bu">Promise</span>(res) <span class="kw">=&gt;</span> <span class="pp">setTimeout</span>(res<span class="op">,</span> SOME_AMOUNT_OF_TIME)})</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Promise</span><span class="op">.</span><span class="fu">race</span>(myNetworkRequest<span class="op">,</span> <span class="kw">new</span> <span class="bu">Promise</span>(res) <span class="kw">=&gt;</span> <span class="pp">setTimeout</span>(res<span class="op">,</span> SOME_AMOUNT_OF_TIME)})</span></code></pre></div>
 <p>The other day I wanted to write a quick test to assert that my resolver would not hang forever to test something similar to what you see above. It took longer then I would have liked. I found that Jest’s way of testing for promise rejections is not straight forward</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">const</span> functionUnderTestReturnsAPromise <span class="op">=</span> someFunction</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="fu">describe</span>(<span class="st">'When ...'</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>  <span class="fu">it</span>(<span class="st">'Then ...'</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>    jest<span class="op">.</span><span class="fu">useFakeTimers</span>()<span class="op">;</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>    <span class="kw">const</span> promise <span class="op">=</span> <span class="fu">functionUnderTestReturnsAPromise</span>()<span class="op">;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>    jest<span class="op">.</span><span class="fu">runAllTimers</span>()<span class="op">;</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>    <span class="cf">return</span> <span class="fu">expect</span>(promise)<span class="op">.</span><span class="at">rejects</span><span class="op">.</span><span class="fu">toEqual</span>(</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>      <span class="st">'rejection message/string'</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>    )<span class="op">;</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>  })<span class="op">;</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a>})<span class="op">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> functionUnderTestReturnsAPromise <span class="op">=</span> someFunction</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(<span class="st">'When ...'</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">it</span>(<span class="st">'Then ...'</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    jest<span class="op">.</span><span class="fu">useFakeTimers</span>()<span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> promise <span class="op">=</span> <span class="fu">functionUnderTestReturnsAPromise</span>()<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    jest<span class="op">.</span><span class="fu">runAllTimers</span>()<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">expect</span>(promise)<span class="op">.</span><span class="at">rejects</span><span class="op">.</span><span class="fu">toEqual</span>(</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">'rejection message/string'</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
 <p>We use <code>useFakeTimers</code> and <code>runAllTimers</code> to make jest mock the setTimeout functions and manipulate the global environment timers.</p>
 <p>The subtlety here is that we are returning the expect call and that way we can evaluate this ‘rejects’ property and run our assertions on what kind of promise rejection occured under our test’s conditions.</p></section>
 </article>

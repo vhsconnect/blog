@@ -37,7 +37,7 @@
   <section><p>use <code>lsblk</code> to find where the sdcard or usb stick is mounted. Something like <code>sda</code>.</p>
 <p>I’ve read other sources advising to unmount the boot image from <code>/run</code> or <code>/media</code> before writing to the flash drive, but I never had to do that.</p>
 <p>Then use the dd command the write the image. image files can be <code>.img</code>, <code>.raw</code> or <code>.iso</code> depending on the architecture and the vendor</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="fu">dd</span> if=pathto.img of=/dev/sdb bs=4M iflag=fullblock oflag=direct conv=fsync status=progress</span></code></pre></div></section>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=pathto.img of=/dev/sdb bs=4M iflag=fullblock oflag=direct conv=fsync status=progress</span></code></pre></div></section>
 </article>
 
     </main>

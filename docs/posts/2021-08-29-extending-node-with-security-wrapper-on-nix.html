@@ -36,33 +36,33 @@
   </section>
   <section><p>In my current work we use a host file to bind our local machine ip to our development infrastructure. We do this so that we can test our front-end application locally but with all the deployed production-ready micro-services without the need for a ton of running (or one giant) container(s).</p>
 <p>There is a small issue however. Linux does not allow a <code>Node</code> process to bind to ports <code>&lt;1024</code>. On typcial systems you just use <code>setcap</code> to allow the Node executable the “capability” to do so</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="va">PATH_TO_NODE=$(</span><span class="fu">which</span> node<span class="va">)</span> <span class="kw">&amp;&amp;</span> <span class="kw">\</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="fu">sudo</span> setcap <span class="st">'cap_net_bind_service=+ep'</span> <span class="va">$PATH_TO_NODE</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">PATH_TO_NODE</span><span class="op">=</span><span class="va">$(</span><span class="fu">which</span> node<span class="va">)</span> <span class="kw">&amp;&amp;</span> <span class="dt">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> setcap <span class="st">'cap_net_bind_service=+ep'</span> <span class="va">$PATH_TO_NODE</span></span></code></pre></div>
 <p>Enter NixOS and the immutable operating system I’ve been running as of late. Without going in to too much detail about how it works, the way you set execuatable capabilities in NixOS is by creting a <a href="https://search.nixos.org/options?channel=20.09&amp;show=security.wrappers&amp;from=0&amp;size=50&amp;sort=relevance&amp;type=packages&amp;query=security.wrappers">security wrapper</a> for it. Think of these wrappers as proxies for the underlying programs throughwhich the capabilities get “propogated” through the underlying program. Security wrappers live in <code>/nix/wrappers/bin</code> directory.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ex">/home/vhs/bin</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="ex">/home/vhs/.npm-global/bin</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="ex">/nix/store/qy5z9gcld7dljm4i5hj3z8a9l6p37y81-python3-3.8.8/bin</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="ex">/nix/store/28sdgfrdvw5sh64f04p064ah528zi26m-terminator-1.92/bin</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a><span class="ex">/nix/store/014nvaxlfr0r24kamh8nmya66g4jcxry-cairo-1.16.0-dev/bin</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a><span class="ex">/nix/store/w44y4a1k06x86hg7pzfdma29b7m7nc5v-freetype-2.10.2-dev/bin</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a><span class="ex">/nix/store/6v59a9iszrs0kxk1b79v7fasn9bwi79q-bzip2-1.0.6.0.1-bin/bin</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a><span class="ex">/nix/store/0z6y1qgais33xl348ls0jdc0i56p0yan-libpng-apng-1.6.37-dev/bin</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a><span class="ex">/nix/store/z7wjsy4q6hbsk7zqwzl36addwiql5hn9-fontconfig-2.13.92-bin/bin</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a><span class="ex">/nix/store/rw7hl4xd60z9qq724klhrikdcyh00w17-expat-2.2.8-dev/bin</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a><span class="ex">/nix/store/1bfigag8ys62ib0qxd1bd0walfbrmw5i-glib-2.64.6-dev/bin</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a><span class="ex">/nix/store/409dk4w32xq7w8mznxh5xg0dyp72igvb-gettext-0.21/bin</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a><span class="ex">/nix/store/xv7zirb6i1ydwp80877akyyfc7skh02r-glib-2.64.6-bin/bin</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a><span class="ex">/run/wrappers/bin</span> <span class="co"># &lt;-</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a><span class="ex">/home/vhs/.nix-profile/bin</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true"></a><span class="ex">/etc/profiles/per-user/vhs/bin</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true"></a><span class="ex">/nix/var/nix/profiles/default/bin</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true"></a><span class="ex">/run/current-system/sw/bin</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/home/vhs/bin</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">/home/vhs/.npm-global/bin</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">/nix/store/qy5z9gcld7dljm4i5hj3z8a9l6p37y81-python3-3.8.8/bin</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">/nix/store/28sdgfrdvw5sh64f04p064ah528zi26m-terminator-1.92/bin</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">/nix/store/014nvaxlfr0r24kamh8nmya66g4jcxry-cairo-1.16.0-dev/bin</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">/nix/store/w44y4a1k06x86hg7pzfdma29b7m7nc5v-freetype-2.10.2-dev/bin</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">/nix/store/6v59a9iszrs0kxk1b79v7fasn9bwi79q-bzip2-1.0.6.0.1-bin/bin</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">/nix/store/0z6y1qgais33xl348ls0jdc0i56p0yan-libpng-apng-1.6.37-dev/bin</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">/nix/store/z7wjsy4q6hbsk7zqwzl36addwiql5hn9-fontconfig-2.13.92-bin/bin</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">/nix/store/rw7hl4xd60z9qq724klhrikdcyh00w17-expat-2.2.8-dev/bin</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">/nix/store/1bfigag8ys62ib0qxd1bd0walfbrmw5i-glib-2.64.6-dev/bin</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="ex">/nix/store/409dk4w32xq7w8mznxh5xg0dyp72igvb-gettext-0.21/bin</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="ex">/nix/store/xv7zirb6i1ydwp80877akyyfc7skh02r-glib-2.64.6-bin/bin</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="ex">/run/wrappers/bin</span> <span class="co"># &lt;-</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="ex">/home/vhs/.nix-profile/bin</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="ex">/etc/profiles/per-user/vhs/bin</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="ex">/nix/var/nix/profiles/default/bin</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="ex">/run/current-system/sw/bin</span></span></code></pre></div>
 <p>These are the directories in my <code>$PATH</code>. Note that run/wrappers/bin is read prior to the bin to nix-profile, user-profile and current-system. Thus they shortcircuit the namespace of the executables they wrap, again in this case <code>Node</code></p>
 <p>You can give the wrapper any “name” you want (and by name I mean the attribute on the security wrapper). For my use case I wanted my tooling (i.e webpack) to bind to port so using some kind of alias was not an option. I just added this to my configuration and I was up and running</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode nix"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>  <span class="ex">security.wrappers.node</span> = {</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>    <span class="bu">source</span> = <span class="st">&quot;</span><span class="va">${pkgs</span><span class="er">.nodejs</span><span class="va">}</span><span class="st">/bin/node&quot;</span><span class="kw">;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>    <span class="ex">capabilities</span> = <span class="st">&quot;cap_net_bind_service=+ep&quot;</span><span class="kw">;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>  };</span></code></pre></div></section>
+<div class="sourceCode" id="cb3"><pre class="sourceCode nix"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  <span class="ex">security.wrappers.node</span> = {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">source</span> = <span class="st">&quot;</span><span class="va">${pkgs</span><span class="er">.nodejs</span><span class="va">}</span><span class="st">/bin/node&quot;</span><span class="kw">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">capabilities</span> = <span class="st">&quot;cap_net_bind_service=+ep&quot;</span><span class="kw">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="er">}</span><span class="kw">;</span></span></code></pre></div></section>
 </article>
 
     </main>

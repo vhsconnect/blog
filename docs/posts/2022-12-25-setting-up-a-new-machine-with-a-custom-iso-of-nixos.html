@@ -40,14 +40,14 @@
 <ul>
 <li>Enabling experiemental flakes, in order to be able to evaluate my existing configuration. In some cases I had to restart the nix daemon after doing this.</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode nix"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>  <span class="ex">nix</span> =  {</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>    <span class="ex">package</span> = pkgs.nixFlakes<span class="kw">;</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>    <span class="ex">extraOptions</span>  = <span class="st">''</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>      <span class="ex">experimental-features</span> = nix-command flakes</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>    <span class="st">''</span>;</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>  <span class="kw">}</span>;</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode nix"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">nix</span> =  {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">package</span> = pkgs.nixFlakes<span class="kw">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ex">extraOptions</span>  = <span class="st">''</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      <span class="ex">experimental-features</span> = nix-command flakes</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">''</span><span class="kw">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">};</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code></pre></div>
 <ul>
 <li>Change the location of the configuration file to something in my home directory. (Not anymore the case with flakes)</li>
 <li>Clone the config and place it in the right place.</li>
@@ -56,39 +56,39 @@
 <p>Sometimes paths wouldn’t evaluate correctly as they would point to the old store for example. It’s not that these things are hard, they’re just tiring especially without my tools, shell, environment on a vanilla install (no nix fomatting, no vim configuration). How great would it be if I can just boot an iso that generates my configuration and be done with it. (Well there would still be some things to do like generating some ssh and gpg keys, but it would still be much faster).</p>
 <h2 id="the-custom-iso">The custom iso</h2>
 <p><a href="https://github.com/nix-community/nixos-generators">nixos-generators</a> allows you to define one of your outputs as an iso based on your own configuration. The definition would look something like this.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode nix"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">{</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>  <span class="ex">inputs</span> = {</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>    <span class="ex">nixpkgs.url</span> = <span class="st">&quot;nixpkgs/nixos-unstable&quot;</span><span class="kw">;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>    <span class="ex">nixos-generators</span> = {</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>      <span class="ex">url</span> = <span class="st">&quot;github:nix-community/nixos-generators&quot;</span><span class="kw">;</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>      <span class="ex">inputs.nixpkgs.follows</span> = <span class="st">&quot;nixpkgs&quot;</span><span class="kw">;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>    <span class="kw">}</span>;</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>  };</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>  <span class="ex">outputs</span> = { self, nixpkgs, nixos-generators, ... }: <span class="kw">{</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>    <span class="co"># if you're creating a boot image for x86_64</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>    <span class="ex">packages.x86_64-linux</span> = {</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a>      <span class="ex">my-iso</span> = nixos-generators.nixosGenerate {</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>        <span class="ex">system</span> = <span class="st">&quot;x86_64-linux&quot;</span><span class="kw">;</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a>        <span class="ex">modules</span> = [</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a>          <span class="ex">./configuration.nix</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true"></a>          <span class="ex">./all-firmware</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true"></a>        ];</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true"></a>        <span class="ex">format</span> = <span class="st">&quot;install-iso&quot;</span><span class="kw">;</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true"></a>      <span class="kw">}</span>;</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true"></a>    };</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true"></a>  };</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode nix"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">inputs</span> = {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">nixpkgs.url</span> = <span class="st">&quot;nixpkgs/nixos-unstable&quot;</span><span class="kw">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="ex">nixos-generators</span> = {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="ex">url</span> = <span class="st">&quot;github:nix-community/nixos-generators&quot;</span><span class="kw">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="ex">inputs.nixpkgs.follows</span> = <span class="st">&quot;nixpkgs&quot;</span><span class="kw">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">};</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="er">}</span><span class="kw">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="ex">outputs</span> = { self, nixpkgs, nixos-generators, ... }: {</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># if you're creating a boot image for x86_64</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="ex">packages.x86_64-linux</span> = {</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      <span class="ex">my-iso</span> = nixos-generators.nixosGenerate {</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="ex">system</span> = <span class="st">&quot;x86_64-linux&quot;</span><span class="kw">;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="ex">modules</span> = [</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>          <span class="ex">./configuration.nix</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>          <span class="ex">./all-firmware</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="ex">]</span><span class="kw">;</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="ex">format</span> = <span class="st">&quot;install-iso&quot;</span><span class="kw">;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>      <span class="er">}</span><span class="kw">;</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="er">}</span><span class="kw">;</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="er">}</span><span class="kw">;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code></pre></div>
 <p>While we’re at it, we can also include proprietary drivers in our iso, so that we know we’ll increase out-of-the-box compatibility with all the hardware out there. Like for example wifi cards on old macs.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode nix"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">{</span> <span class="ex">config</span> <span class="kw">}</span> <span class="bu">:</span> {</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>  <span class="ex">nixpkgs.allowUnfree</span> = true<span class="kw">;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>  <span class="ex">boot.extraModulePackages</span>  =  [ config.boot.kernelPackages.broadcom_sta ]<span class="kw">;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>  <span class="ex">hardware.enableRedistributableHardware</span> = true<span class="kw">;</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>  <span class="ex">hardware.enableAllFirmware</span> = true<span class="kw">;</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode nix"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span> <span class="ex">config</span> } : {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">nixpkgs.allowUnfree</span> = true<span class="kw">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">boot.extraModulePackages</span>  =  [ config.boot.kernelPackages.broadcom_sta ]<span class="kw">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">hardware.enableRedistributableHardware</span> = true<span class="kw">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">hardware.enableAllFirmware</span> = true<span class="kw">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
 <p>Then just build the iso and find the image <code>./result/iso</code></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="ex">nix</span> build .#my-iso</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nix</span> build .#my-iso</span></code></pre></div>
 <p>Next just flash it onto your usb or mount in a vm</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="fu">dd</span> if=<span class="op">&lt;</span>path/to/iso<span class="op">&gt;</span> of=<span class="op">&lt;</span>device<span class="op">&gt;</span> bs=1M status=progress</span></code></pre></div></section>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=<span class="op">&lt;</span>path/to/iso<span class="op">&gt;</span> of=<span class="op">&lt;</span>device<span class="op">&gt;</span> bs=1M status=progress</span></code></pre></div></section>
 </article>
 
     </main>
