@@ -30,31 +30,12 @@
         );
       in
       {
-        packages.default = pkgs.stdenv.mkDerivation {
-          name = "vhs-blog";
-          src = ./.;
-          nativeBuildInputs = [
-            env
-            pkgs.glibcLocales
-            pkgs.cabal-install
-          ];
-          buildPhase = ''
-            export HOME=$TMP
-            cabal run site build
-          '';
-        };
 
         devShells.default = pkgs.mkShell {
-          shellHook = ''
-            cabal update
-            cabal run site build
-            echo ⛵
-            exit
-          '';
           buildInputs = [
             pkgs.cabal-install
-            env
             pkgs.glibcLocales
+            env
           ];
         };
       }

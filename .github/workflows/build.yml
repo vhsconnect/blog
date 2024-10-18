@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
-      - run: nix develop
+      - run: nix develop --impure -c bash -c "cabal update; cabal run site build"
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "auto generate /docs"

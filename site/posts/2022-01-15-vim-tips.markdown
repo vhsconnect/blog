@@ -29,4 +29,3 @@ You can define a capture group like this `/\(my_capture_group\)/`
 
 For example for all lines that have `hello`. Highlight the lines you want to run the search and replace command on and then
 `:s/\(.*hello.*\)/\1 \r goodbye`. The 1 represents the text we subbed out.
-
