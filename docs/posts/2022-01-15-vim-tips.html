@@ -38,9 +38,16 @@
 <li><p>you can sort multiple lines by the first letter of each line, by highlighting the bunch and executing <code>:sort</code></p></li>
 <li><p>you can edit multiple lines by enting visual mode <code>&lt;ctrl&gt;v</code> and then hitting <code>I</code> or <code>A</code> entering your edit and pressing <code>Esc</code></p></li>
 <li><p>you can also append to the end of the line by hitting <code>$</code> before the <code>A</code></p></li>
-<li><p>you can input x amount of chars at once with: <code>&lt;x&gt;</code> <code>i</code> <code>&lt;char&gt;</code></p></li>
+<li><p>hello you can input x amount of chars at once with: <code>&lt;x&gt;</code> <code>i</code> <code>&lt;char&gt;</code> rgoodbye</p></li>
 <li><p>you can replace x amount of chars with a char by highlighting the text then <code>r</code> <code>&lt;char&gt;</code></p></li>
-</ul></section>
+</ul>
+<h3 id="capture-groups">Capture groups</h3>
+<h4 id="using-vimgrep">using vimgrep</h4>
+<p>You can use vimgrep to capture some text that matches a particular regex.</p>
+<p><code>:vimgrep /['"]github[^'"]*['"]/ %</code></p>
+<h4 id="using-a-global-search-and-replace.">using a global search and replace.</h4>
+<p>You can define a capture group like this <code>/\(my_capture_group\)/</code></p>
+<p>For example for all lines that have <code>hello</code>. Highlight the lines you want to run the search and replace command on and then <code>:s/\(.*hello.*\)/\1 \r goodbye</code>. The 1 represents the text we subbed out.</p></section>
 </article>
 
     </main>
