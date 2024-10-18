@@ -10,6 +10,23 @@ author: vhs
 
 - you can also append to the end of the line by hitting `$` before the `A`
 
-- you can input x amount of chars at once with: `<x>` `i` `<char>` 
+- hello you can input x amount of chars at once with: `<x>` `i` `<char>`  rgoodbye 
 
 - you can replace x amount of chars with a char by highlighting the text then `r` `<char>`
+
+
+### Capture groups
+
+#### using vimgrep
+
+You can use vimgrep to capture some text that matches a particular regex.
+
+`:vimgrep /['"]github[^'"]*['"]/ %`
+
+#### using a global search and replace.
+
+You can define a capture group like this `/\(my_capture_group\)/`
+
+For example for all lines that have `hello`. Highlight the lines you want to run the search and replace command on and then
+`:s/\(.*hello.*\)/\1 \r goodbye`. The 1 represents the text we subbed out.
+
