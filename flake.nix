@@ -6,25 +6,56 @@
     utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, utils, nixpkgs }:
+  outputs =
+    {
+      self,
+      utils,
+      nixpkgs,
+    }:
     utils.lib.eachDefaultSystem (
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        env = pkgs.haskellPackages.ghcWithHoogle (p: with p ; [
-          hakyll
-          haskell-language-server
-          hlint
-          ormolu
-          floskell
-          hindent
-          zlib
-          ghcid
-        ]);
+        env = pkgs.haskellPackages.ghcWithHoogle (
+          p: with p; [
+            hakyll
+            haskell-language-server
+            hlint
+            ormolu
+            floskell
+            hindent
+            zlib
+            ghcid
+          ]
+        );
       in
       {
+        packages.default = pkgs.stdenv.mkDerivation {
+          name = "vhs-blog";
+          src = ./.;
+          nativeBuildInputs = [
+            env
+            pkgs.glibcLocales
+            pkgs.cabal-install
+          ];
+          buildPhase = ''
+            export HOME=$TMP
+            cabal run site build
+          '';
+        };
+
         devShells.default = pkgs.mkShell {
-          buildInputs = [ env pkgs.glibcLocales ];
+          shellHook = ''
+            cabal update
+            cabal run site build
+            echo ⛵
+            exit
+          '';
+          buildInputs = [
+            pkgs.cabal-install
+            env
+            pkgs.glibcLocales
+          ];
         };
       }
     );
