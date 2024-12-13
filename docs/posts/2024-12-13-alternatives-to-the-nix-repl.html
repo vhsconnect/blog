@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>2024-12-13-alternatives-to-the-nix-repl</title>
+    <link rel="stylesheet" href="../css/default.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+      </div>
+      <nav>
+        <a href="../">Home</a>
+        <a href="../about.html">About</a>
+        <a href="../contact.html">Contact</a>
+        <a href="../archive.html">Archive</a>
+      </nav>
+    </header>
+
+    <main role="main">
+      <h1>2024-12-13-alternatives-to-the-nix-repl</h1>
+      <article>
+  <section class="header">
+    Posted on December 13, 2024 
+    
+  </section>
+  <section class="header">
+     
+     Tags: 
+    
+  </section>
+  <section><p>I am yet to find an ergonomic way to use the Nix repl. I’m sure it’s a great but I typically find myself needing to fiddle with Nix expressions over and over again sometimes before getting what I want and typing the code in a repl gets in my way. What if I need to change a function or a value.</p>
+<h3 id="setting-up-a-watcher">Setting up a watcher</h3>
+<p>We can use an inotifywait loop to watch a file and execute it when it changes. Nix’s <code>eval</code> command can process an expression and that is all the main components we need for setting up a live Read Eval Process Loop. Just pass it the path to a file you want to evaluate. This particular command will evaluate an attribute called <code>x</code>. So you can have a bunch of Nix expressions in there and just move the one you want to evaluate at any moment to x.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a> <span class="co">#!/usr/bin/env bash</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a> <span class="bu">echo</span> <span class="st">&quot;watching...&quot;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a> <span class="cf">while</span> <span class="ex">inotifywait</span> <span class="at">-e</span> close_write <span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a> 	<span class="ex">nix</span> eval <span class="at">--expr</span> <span class="st">&quot;builtins.getAttr </span><span class="dt">\&quot;</span><span class="st">x</span><span class="dt">\&quot;</span><span class="st"> (import </span><span class="va">$(</span><span class="ex">realpath</span> <span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span><span class="va">)</span><span class="st"> { lib = (import &lt;nixpkgs&gt; {}).lib; })&quot;</span> <span class="at">--impure</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a> <span class="cf">done</span></span></code></pre></div>
+<p>Note that for flake users to get <code>&lt;nixpkgs&gt;</code> to point to your store you need to setup it as your <code>nix.nixPath</code>. So define this value in your configuration somewhere and pass your <code>nixpkgs</code> reference to it.</p>
+<h3 id="evaluation-file">Evaluation File</h3>
+<p>it should look something like this.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode nix"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span> <span class="ex">lib</span> }:</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">x</span> =</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="ex">with</span> lib<span class="kw">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="ex">with</span> builtins<span class="kw">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">let</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="ex">fonts</span> = [</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">{</span> <span class="ex">Hermit</span> = <span class="st">&quot;Hurmit&quot;</span><span class="kw">;</span> <span class="kw">}</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">{</span> <span class="ex">Lekton</span> = <span class="st">&quot;Lekton&quot;</span><span class="kw">;</span> <span class="kw">}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">{</span> <span class="ex">AurulentSansMono</span> = <span class="st">&quot;AurulentSansM&quot;</span><span class="kw">;</span> <span class="kw">}</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">{</span> <span class="ex">AnonymousPro</span> = <span class="st">&quot;AnonymicePro&quot;</span><span class="kw">;</span> <span class="kw">}</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">{</span> <span class="ex">EnvyCodeR</span> = <span class="st">&quot;EnvyCodeR&quot;</span><span class="kw">;</span> <span class="kw">}</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      <span class="ex">]</span><span class="kw">;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>      <span class="ex">generateFontTemplate</span> = font_name: <span class="st">&quot;family = </span><span class="va">${font_name}</span><span class="st"> Nerd Font&quot;</span><span class="kw">;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>      <span class="ex">firstAttrName</span> = z: head <span class="er">(</span><span class="ex">attrNames</span> z<span class="kw">);</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>      <span class="ex">firstAttrValue</span> = z: head <span class="er">(</span><span class="ex">attrValues</span> z<span class="kw">);</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>      <span class="ex">mappedFonts</span> = map <span class="er">(</span><span class="ex">y:</span> {</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        <span class="ex">name</span> = <span class="st">&quot;alacritty/fonts/</span><span class="va">${firstAttrName</span><span class="er"> y</span><span class="va">}</span><span class="st">.toml&quot;</span><span class="kw">;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        <span class="ex">value</span> = {</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>          <span class="ex">text</span> = generateFontTemplate <span class="er">(</span><span class="ex">firstAttrValue</span> y<span class="kw">);</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="er">}</span><span class="kw">;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>      <span class="er">}</span><span class="kw">)</span> <span class="ex">fonts</span><span class="kw">;</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="er">in</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="ex">listToAttrs</span> mappedFonts<span class="kw">;</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div></section>
+</article>
+
+    </main>
+
+    <footer>
+      Site generated by
+      <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+    </footer>
+  </body>
+</html>
