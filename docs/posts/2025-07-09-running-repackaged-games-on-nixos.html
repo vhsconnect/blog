@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>2025-07-09-running-repackaged-games-on-nixos</title>
+    <title>Running repackaged games on nixos with lutris and protonup</title>
     <link rel="stylesheet" href="../css/default.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,15 +23,15 @@
     </header>
 
     <main role="main">
-      <h1>2025-07-09-running-repackaged-games-on-nixos</h1>
+      <h1>Running repackaged games on nixos with lutris and protonup</h1>
       <article>
   <section class="header">
     Posted on July  9, 2025 
-    
+     by vhs 
   </section>
   <section class="header">
      
-     Tags: 
+     Tags: <a title="All pages tagged 'linux'." href="../tags/linux.html">linux</a>, <a title="All pages tagged 'nixos'." href="../tags/nixos.html">nixos</a>, <a title="All pages tagged 'protonup'." href="../tags/protonup.html">protonup</a>, <a title="All pages tagged 'lutris'." href="../tags/lutris.html">lutris</a>, <a title="All pages tagged 'gaming'." href="../tags/gaming.html">gaming</a>
     
   </section>
   <section><p>Repackaged software is widely available but there is little information about how to run it on linux however far gaming on linux has come. I found this <a href="https://github.com/elmhadji/instal_repacks_in_Linux/blob/main/README.md">great writeup</a> the other day and I wanted to summarize what worked for me running on NixOs.</p>
@@ -50,9 +50,9 @@
 <li>disable screen saver</li>
 <li>prefer system librarie</li>
 </ul>
-<p>## Installing versions of Wine through protonup-qt Proton up allows you to add and remove various Vulkan libraries and version of wine. These are the ones recommended to use with Lutris.</p>
-<pre><code>
-vkd3d (Experimental Direct3D to Vulkan layer)
+<h2 id="installing-versions-of-wine-through-protonup-qt">Installing versions of Wine through protonup-qt</h2>
+<p>Proton up allows you to add and remove various Vulkan libraries and version of wine. These are the ones recommended to use with Lutris.</p>
+<pre><code>vkd3d (Experimental Direct3D to Vulkan layer)
 dxvk (DirectX translation layer for Vulkan)
 wine-ge (wine version with loads of patches)
 lutris (lutris wine)</code></pre>
