@@ -1,3 +1,8 @@
+---
+title: Running repackaged games on nixos with lutris and protonup
+author: vhs
+tags: linux, nixos, protonup, lutris, gaming
+---
 Repackaged software is widely available but there is little information about how to run it on linux however far gaming on linux has come. I found this [great writeup](https://github.com/elmhadji/instal_repacks_in_Linux/blob/main/README.md) the other day and I wanted to summarize what worked for me running on NixOs.
 
 ## Introduction
@@ -18,11 +23,11 @@ TLDR. Install lutris and protonup-qt. Install the latest versions of wine throug
 - prefer system librarie 
 
 
- ##  Installing versions of Wine through protonup-qt
- Proton up allows you to add and remove various Vulkan libraries and version of wine. These are the ones recommended to use with Lutris.
+## Installing versions of Wine through protonup-qt
+
+Proton up allows you to add and remove various Vulkan libraries and version of wine. These are the ones recommended to use with Lutris.
 
 ```
-
 vkd3d (Experimental Direct3D to Vulkan layer)
 dxvk (DirectX translation layer for Vulkan)
 wine-ge (wine version with loads of patches)
