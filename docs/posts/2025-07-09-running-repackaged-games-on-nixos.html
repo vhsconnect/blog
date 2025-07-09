@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>2025-07-09-running-repackaged-games-on-nixos</title>
+    <link rel="stylesheet" href="../css/default.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+      </div>
+      <nav>
+        <a href="../">Home</a>
+        <a href="../about.html">About</a>
+        <a href="../contact.html">Contact</a>
+        <a href="../archive.html">Archive</a>
+      </nav>
+    </header>
+
+    <main role="main">
+      <h1>2025-07-09-running-repackaged-games-on-nixos</h1>
+      <article>
+  <section class="header">
+    Posted on July  9, 2025 
+    
+  </section>
+  <section class="header">
+     
+     Tags: 
+    
+  </section>
+  <section><p>Repackaged software is widely available but there is little information about how to run it on linux however far gaming on linux has come. I found this <a href="https://github.com/elmhadji/instal_repacks_in_Linux/blob/main/README.md">great writeup</a> the other day and I wanted to summarize what worked for me running on NixOs.</p>
+<h2 id="introduction">Introduction</h2>
+<p>The difference between a repacked game and a game you download from let’s say St eam or Epi cgames is that those games are signed on the server prior to you getting your copy on the host. Repackaged games or simply - repacks - have a binary installer that does this “signing” instead of the game server. Lutris provides a nice interface to run that installer with the <code>Run EXE inside Wine prefix.</code> option.</p>
+<p>TLDR. Install lutris and protonup-qt. Install the latest versions of wine through protonup-qt. Use lutris to run the installer and then game.</p>
+<h2 id="packages-to-install">Packages to install?</h2>
+<p><a href="https://search.nixos.org/packages?show=lutris">Lutris</a> to manage your game installation, settings and launch <a href="https://search.nixos.org/packages?show=protonup-qt">ProtonUp-Qt</a> to manage your version of wine</p>
+<h2 id="configuring-lutris-optional">Configuring Lutris (optional)</h2>
+<ol type="1">
+<li><strong>Open Lutris</strong>: If it’s your first time running Lutris, wait a few minutes for setup.</li>
+<li><strong>Access Preferences</strong> and do the following:</li>
+</ol>
+<ul>
+<li>disable Lutris Runtime</li>
+<li>disable screen saver</li>
+<li>prefer system librarie</li>
+</ul>
+<p>## Installing versions of Wine through protonup-qt Proton up allows you to add and remove various Vulkan libraries and version of wine. These are the ones recommended to use with Lutris.</p>
+<pre><code>
+vkd3d (Experimental Direct3D to Vulkan layer)
+dxvk (DirectX translation layer for Vulkan)
+wine-ge (wine version with loads of patches)
+lutris (lutris wine)</code></pre>
+<ol type="1">
+<li>Open ProtonUp-Qt.</li>
+<li>Select “Lutris” from the drop-down menu.</li>
+<li>Click “Add version.”</li>
+<li>Select “Wine-GE” under “Compatibility tool.”</li>
+<li>Choose the latest non-lol version and click “Install.”</li>
+<li>Restart Lutris if it was open.</li>
+</ol>
+<h2 id="installing-windows-repacks-in-lutris">Installing Windows Repacks in Lutris</h2>
+<ol type="1">
+<li><p>Open Lutris.</p></li>
+<li><p>Click on the ‘+’ icon in the top left corner.</p></li>
+<li><p>Click “Add locally installed game.”</p></li>
+<li><p>Enter the name of your game in the “Name” field.</p></li>
+<li><p>Select “Wine (Run Windows games)” from the “Runner” list.</p></li>
+<li><p>Go to the “Game options” tab and enable “Show advanced options.”</p></li>
+<li><p>The executable is empty for now - After you run the installer - i.e. <code>Setup.exe</code>, you can come back and add its path here.</p></li>
+<li><p>In the “Wine prefix” field, enter the path where you want to create the prefix (e.g., <code>~/Games/my-game</code>).</p></li>
+<li><p>Click on the game you just added.</p></li>
+<li><p>Click the “Up” icon next to the “Wine Glass” icon on the bottom panel and select <code>Run EXE inside Wine prefix.</code></p></li>
+<li><p>Choose the “setup.exe” file from the repack folder and run it.</p></li>
+<li><p>Follow the installer instructions, ensuring you install the game on the "C:" drive within the Wine prefix.</p></li>
+<li><p>Once that is done, you’ll have to find the exe file and set it back in the field from earlier</p></li>
+<li><p>Double click the game to launch it. You can adjust the settings for the game by right clicking it and hitting <code>Configure</code></p></li>
+</ol>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<ul>
+<li>I ran into this issue because my monitor wasn’t set to start at pixels x:0 and y:0. You can use software like <code>wdisplays</code> to set it</li>
+</ul></section>
+</article>
+
+    </main>
+
+    <footer>
+      Site generated by
+      <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+    </footer>
+  </body>
+</html>
