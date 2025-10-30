@@ -12,11 +12,22 @@ quick scribles to remember jq usage
 - provide 2 outputs with "," `cat <file> | jq '. , .foo'`
 - when mapping, "." is considered each value, use map for array mapValues for objects
 
-example jq query
+
+#### example
 
 ```sh
 #! /usr/bin/env sh
 
 cat ./storage.json | jq '.' | jq '.favorites' \
   | jq 'map({"id": ., "with20delay": false, "with30delay": false})' | jq '{favorites: .}'
+```
+
+
+#### Map a value with point-free style
+
+
+```sh
+#! /usr/bin/env sh
+
+cat ./storage.json | jq '.favorites' | jq 'map(.rate |= tonumber)'
 ```
